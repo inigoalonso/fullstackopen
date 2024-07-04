@@ -6,6 +6,9 @@ const App = () => {
   const [countries, setCountries] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [error, setError] = useState('');
+  const [weather, setWeather] = useState(null);
+
+  const api_key = import.meta.env.VITE_OPENWEATHERMAP_KEY;
 
   useEffect(() => {
     if (searchQuery) {
@@ -39,12 +42,32 @@ const App = () => {
     }
   }, [searchQuery]);
 
+  useEffect(() => {
+    if (selectedCountry) {
+      getWeather(selectedCountry.capital);
+    }
+  }, [selectedCountry]);
+
+  const getWeather = (capital) => {
+    if (capital) {
+      axios
+        .get(`https://api.openweathermap.org/data/2.5/weather?q=${capital}&appid=${api_key}&units=metric`)
+        .then(response => {
+          setWeather(response.data);
+        })
+        .catch(error => {
+          console.error('Error getting the weather info:', error);
+        });
+    }
+  };
+
   const handleSearchChange = event => {
     setSearchQuery(event.target.value);
   };
 
   const handleShowCountry = country => {
     setSelectedCountry(country);
+    getWeather(country.capital);
   };
 
   return (
@@ -73,6 +96,15 @@ const App = () => {
             ))}
           </ul>
           <img src={selectedCountry.flags.svg} alt={`Flag of ${selectedCountry.name.common}`} width="150" />
+          {weather && (
+            <div>
+              <h2>Weather in {selectedCountry.capital}</h2>
+              <p>temperature {weather.main.temp} C</p>
+              <p>weather description: {weather.weather[0].description}</p>
+              <img src={`http://openweathermap.org/img/w/${weather.weather[0].icon}.png`} />
+              <p>wind {weather.wind.speed} m/s</p>
+            </div>
+          )}
         </div>
       )}
     </div>
