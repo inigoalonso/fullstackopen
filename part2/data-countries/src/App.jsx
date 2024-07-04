@@ -43,6 +43,10 @@ const App = () => {
     setSearchQuery(event.target.value);
   };
 
+  const handleShowCountry = country => {
+    setSelectedCountry(country);
+  };
+
   return (
     <div>
       <form>
@@ -52,7 +56,7 @@ const App = () => {
       {countries.length > 1 && (
         <ul>
           {countries.map(country => (
-            <li key={country.cca3}>{country.name.common}</li>
+            <li key={country.cca3}>{country.name.common} <button onClick={() => handleShowCountry(country)}>Show</button></li>
           ))}
         </ul>
       )}
