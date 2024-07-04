@@ -24,11 +24,23 @@ const Content = ({ parts }) => {
   );
 };
 
+const Total = ({ parts }) => {
+  const totalSum = parts
+    .map((p) => p.exercises)
+    .reduce((accumulator, curr) => accumulator + curr, 0);
+  return (
+    <>
+      <p><b>total of {totalSum} exercises.</b></p>
+    </>
+  );
+};
+
 const Course = ({ course }) => {
   return (
     <div>
       <Header course={course.name} />
       <Content parts={course.parts} />
+      <Total parts={course.parts} />
     </div>
   );
 };
