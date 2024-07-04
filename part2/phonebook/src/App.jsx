@@ -88,6 +88,15 @@ const App = () => {
           }, 5000);
           setNewName('');
           setNewNumber('');
+        }).catch(error => {
+          setNotification({
+            message: `Information of ${newName} has already been removed from the server`,
+            type: 'error'
+          });
+          setTimeout(() => {
+            setNotification({ message: null, type: '' });
+          }, 5000);
+          setPersons(persons.filter(p => p.id !== existingPerson.id));
         });
       }
     } else {
@@ -112,6 +121,15 @@ const App = () => {
         setTimeout(() => {
           setNotification({ message: null, type: '' });
         }, 5000);
+      }).catch(error => {
+        setNotification({
+          message: `Information of ${person.name} has already been removed from the server`,
+          type: 'error'
+        });
+        setTimeout(() => {
+          setNotification({ message: null, type: '' });
+        }, 5000);
+        setPersons(persons.filter(p => p.id !== id));
       });
     }
   };
@@ -140,6 +158,7 @@ const App = () => {
       <h3>Numbers</h3>
 
       <Persons persons={personsFiltered} deletePerson={deletePerson} />
+
     </div>
   );
 };
