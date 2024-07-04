@@ -11,10 +11,7 @@ const Button = ({ onClick, text }) => {
 };
 
 const StatisticLine = ({ text, value }) => (
-  <tr>
-    <td>{text}</td>
-    <td>{value}</td>
-  </tr>
+  <p>{text} {value}</p>
 );
 
 const Statistics = ({ counters }) => {
@@ -34,16 +31,14 @@ const Statistics = ({ counters }) => {
       (100 * counters.find((p) => p.text === "good").counter) / totalSum;
 
     return (
-      <table>
-        <tbody>
-          {counters.map(({ text, counter }, index) => (
-            <StatisticLine key={index} text={text} value={counter} />
-          ))}
-          <StatisticLine text={"all"} value={totalSum} />
-          <StatisticLine text={"average"} value={average} />
-          <StatisticLine text={"positive"} value={`${positiveProp} %`} />
-        </tbody>
-      </table>
+      <div>
+        {counters.map(({ text, counter }, index) => (
+          <StatisticLine key={index} text={text} value={counter} />
+        ))}
+        <StatisticLine text={"all"} value={totalSum} />
+        <StatisticLine text={"average"} value={average} />
+        <StatisticLine text={"positive"} value={`${positiveProp} %`} />
+      </div>
     );
   }
 };
