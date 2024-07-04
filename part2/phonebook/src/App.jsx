@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
-import personService from './services/persons'
+import { useState, useEffect } from 'react';
+import personService from './services/persons';
+import './index.css';
 
 const Filter = ({ searchTerm, handleSearchChange }) => (
   <div>
@@ -22,102 +23,125 @@ const PersonForm = ({ newName, handleNameChange, newNumber, handleNumberChange, 
 );
 
 const Person = ({ person, deletePerson }) => (
-  <p>{person.name} {person.number} <button onClick={() => deletePerson(person.id)}>delete</button></p>
+  <p>
+    {person.name} {person.number} <button onClick={() => deletePerson(person.id)}>delete</button>
+  </p>
 );
 
 const Persons = ({ persons, deletePerson }) => (
   <div>
-    {persons.map(person => <Person key={person.name} person={person} deletePerson={deletePerson} />)}
+    {persons.map(person => (
+      <Person key={person.id} person={person} deletePerson={deletePerson} />
+    ))}
   </div>
 );
 
+const Notification = ({ message, type }) => {
+  if (message === null) {
+    return null;
+  }
+
+  return (
+    <div className={type}>
+      {message}
+    </div>
+  );
+};
+
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '+358 01010101' },
-    { name: 'Charles Babbage', number: '+358 20202020' },
-  ]) 
-  const [newName, setNewName] = useState('')
-  const [newNumber, setNewNumber] = useState('')
-  const [searchTerm, setSearchTerm] = useState('')
+  const [persons, setPersons] = useState([]);
+  const [newName, setNewName] = useState('');
+  const [newNumber, setNewNumber] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [notification, setNotification] = useState({ message: null, type: '' });
 
   useEffect(() => {
-    personService
-      .getAll()
-      .then(initialPersons => {
-        setPersons(initialPersons)
-      })
-  }, [])
-  console.log('render', persons.length, 'persons')
+    personService.getAll().then(initialPersons => {
+      setPersons(initialPersons);
+    });
+  }, []);
 
-  const handleNameChange = (event) => {
+  const handleNameChange = event => {
     setNewName(event.target.value);
   };
-  const handleNumberChange = (event) => {
+
+  const handleNumberChange = event => {
     setNewNumber(event.target.value);
   };
-  const handleSearchChange = (event) => {
+
+  const handleSearchChange = event => {
     setSearchTerm(event.target.value);
   };
 
-  const addPerson = (event) => {
+  const addPerson = event => {
     event.preventDefault();
-    const newPerson = { name: newName, number: newNumber };
     const existingPerson = persons.find(person => person.name === newName);
+    const newPerson = { name: newName, number: newNumber };
+
     if (existingPerson) {
       if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
         personService.update(existingPerson.id, newPerson).then(returnedPerson => {
           setPersons(persons.map(person => (person.id !== existingPerson.id ? person : returnedPerson)));
+          setNotification({ message: `Updated ${newName}'s number`, type: 'success' });
+          setTimeout(() => {
+            setNotification({ message: null, type: '' });
+          }, 5000);
           setNewName('');
           setNewNumber('');
         });
       }
     } else {
-      personService
-        .create(newPerson)
-        .then(returnedPerson => {
-          setPersons(persons.concat(returnedPerson));
-          setNewName('');
-          setNewNumber('');
-        });
-    }
-    setNewName('');
-    setNewNumber('');
-  };
-
-  const deletePerson = (id) => {
-    const person = persons.find(p => p.id === id);
-    if (window.confirm(`delete ${person.name} ?`)) {
-      personService.remove(id).then(() => {
-        setPersons(persons.filter(p => p.id !== id));
+      personService.create(newPerson).then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson));
+        setNotification({ message: `Added ${newName}`, type: 'success' });
+        setTimeout(() => {
+          setNotification({ message: null, type: '' });
+        }, 5000);
+        setNewName('');
+        setNewNumber('');
       });
     }
   };
 
-  const personsFiltered = persons.filter(person => 
+  const deletePerson = id => {
+    const person = persons.find(p => p.id === id);
+    if (window.confirm(`Delete ${person.name}?`)) {
+      personService.remove(id).then(() => {
+        setPersons(persons.filter(p => p.id !== id));
+        setNotification({ message: `Deleted ${person.name}`, type: 'success' });
+        setTimeout(() => {
+          setNotification({ message: null, type: '' });
+        }, 5000);
+      });
+    }
+  };
+
+  const personsFiltered = persons.filter(person =>
     person.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
-  <div>
-    <h2>Phonebook</h2>
+    <div>
+      <h2>Phonebook</h2>
+      <Notification message={notification.message} type={notification.type} />
 
-    <Filter searchTerm={searchTerm} handleSearchChange={handleSearchChange} />
+      <Filter searchTerm={searchTerm} handleSearchChange={handleSearchChange} />
 
-    <h3>add a new</h3>
+      <h3>add a new</h3>
 
-    <PersonForm 
-      newName={newName}
-      handleNameChange={handleNameChange}
-      newNumber={newNumber}
-      handleNumberChange={handleNumberChange}
-      addPerson={addPerson}
-    />
+      <PersonForm
+        newName={newName}
+        handleNameChange={handleNameChange}
+        newNumber={newNumber}
+        handleNumberChange={handleNumberChange}
+        addPerson={addPerson}
+      />
 
-    <h3>Numbers</h3>
+      <h3>Numbers</h3>
 
-    <Persons persons={personsFiltered} deletePerson={deletePerson} />
-  </div>
-  )
-}
+      <Persons persons={personsFiltered} deletePerson={deletePerson} />
+    </div>
+  );
+};
 
-export default App
+export default App;

@@ -21,19 +21,14 @@
       "id": "4"
     },
     {
-      "id": "237c",
       "name": "test1",
-      "number": "1"
+      "number": "1",
+      "id": "237c"
     },
     {
+      "id": "5f1b",
       "name": "test2",
-      "number": "2",
-      "id": "44a4"
-    },
-    {
-      "id": "3e6a",
-      "name": "test3",
-      "number": "3"
+      "number": "2"
     }
   ]
 }
