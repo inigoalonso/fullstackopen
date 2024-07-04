@@ -18,12 +18,23 @@ const StatisticLine = ({ text, value }) => (
 );
 
 const Statistics = ({ counters }) => {
+  // dependes on the value of the counters (+1, 0, -1)
+  const totalSum = counters.reduce((acc, { counter, value }) => acc + counter * value, 0);
+
+  const average = totalSum / counters.length;
+
+  const positiveProp =
+    (100 * counters.find((p) => p.text === "good").counter) / totalSum;
+
   return (
     <table>
       <tbody>
         {counters.map(({ text, counter }, index) => (
           <StatisticLine key={index} text={text} value={counter} />
         ))}
+        <StatisticLine text={"all"} value={totalSum} />
+        <StatisticLine text={"average"} value={average} />
+        <StatisticLine text={"positive"} value={`${positiveProp} %`} />
       </tbody>
     </table>
   );
@@ -42,15 +53,18 @@ const App = () => {
   const counters = [
     {
       text: "good",
-      counter: good,
+      counter: good, // value = +1
+      value: 1,
     },
     {
       text: "neutral",
-      counter: neutral,
+      counter: neutral, // value = 0
+      value: 0,
     },
     {
       text: "bad",
-      counter: bad,
+      counter: bad, // value = -1
+      value: -1,
     },
   ];
 
