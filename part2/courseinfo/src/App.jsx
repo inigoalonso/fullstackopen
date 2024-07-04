@@ -27,7 +27,7 @@ const Content = ({ parts }) => {
 const Total = ({ parts }) => {
   const totalSum = parts
     .map((p) => p.exercises)
-    .reduce((accumulator, curr) => accumulator + curr, 0);
+    .reduce((accumulator, curr) => accumulator + curr, 0); // reduce() method reduces the array to a single value
   return (
     <>
       <p><b>total of {totalSum} exercises.</b></p>
