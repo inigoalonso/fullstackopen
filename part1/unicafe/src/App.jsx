@@ -21,23 +21,31 @@ const Statistics = ({ counters }) => {
   // dependes on the value of the counters (+1, 0, -1)
   const totalSum = counters.reduce((acc, { counter, value }) => acc + counter * value, 0);
 
-  const average = totalSum / counters.length;
+  if (totalSum == 0) {
+    return (
+      <>
+        <p>No feedback given</p>
+      </>
+    );
+  } else {
+    const average = totalSum / counters.length;
 
-  const positiveProp =
-    (100 * counters.find((p) => p.text === "good").counter) / totalSum;
+    const positiveProp =
+      (100 * counters.find((p) => p.text === "good").counter) / totalSum;
 
-  return (
-    <table>
-      <tbody>
-        {counters.map(({ text, counter }, index) => (
-          <StatisticLine key={index} text={text} value={counter} />
-        ))}
-        <StatisticLine text={"all"} value={totalSum} />
-        <StatisticLine text={"average"} value={average} />
-        <StatisticLine text={"positive"} value={`${positiveProp} %`} />
-      </tbody>
-    </table>
-  );
+    return (
+      <table>
+        <tbody>
+          {counters.map(({ text, counter }, index) => (
+            <StatisticLine key={index} text={text} value={counter} />
+          ))}
+          <StatisticLine text={"all"} value={totalSum} />
+          <StatisticLine text={"average"} value={average} />
+          <StatisticLine text={"positive"} value={`${positiveProp} %`} />
+        </tbody>
+      </table>
+    );
+  }
 };
 
 const App = () => {
