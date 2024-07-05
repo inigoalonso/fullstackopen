@@ -89,10 +89,9 @@ const App = () => {
           setNewName('');
           setNewNumber('');
         }).catch(error => {
-          setNotification({
-            message: `Information of ${newName} has already been removed from the server`,
-            type: 'error'
-          });
+          // this is the way to access the error message
+          console.log(error.response.data.error)
+          setNotification({ message: error.response.data.error, type: 'error' });
           setTimeout(() => {
             setNotification({ message: null, type: '' });
           }, 5000);
@@ -113,6 +112,9 @@ const App = () => {
         // this is the way to access the error message
         console.log(error.response.data.error)
         setNotification({ message: error.response.data.error, type: 'error' });
+        setTimeout(() => {
+          setNotification({ message: null, type: '' });
+        }, 5000);
       })
     }
   };
